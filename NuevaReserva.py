@@ -11,50 +11,46 @@ class VentanaPestanas(tk.Tk):
         self.geometry("1343x900")
         self.iconbitmap("logo.ico")
 
-        # Crear un Canvas para el fondo general
+        # -- Crear un Canvas para el fondo general
         self.canvas = tk.Canvas(self, width=1343, height=900)
         self.canvas.pack(fill="both", expand=True)
-
-        # Cargar la imagen de fondo
         fondo_img = tk.PhotoImage(file="fondo.png")
         self.canvas.create_image(0, 0, anchor="nw", image=fondo_img)
-        # Evitar que la imagen sea eliminada por el recolector de basura
         self.canvas.fondo_img = fondo_img
 
-        # Logo
-        self.logo_frame = tk.Frame(self, width=60, height=35)  # Frame reducido
+        # -- Logo
+        self.logo_frame = tk.Frame(self, width=60, height=35)
         self.logo_frame.place(relx=0.5, anchor="center", y=50)
         self.logo_frame.configure(background="black")
-
-        # Cargar la imagen de logo con Pillow y eliminar los bordes
+        # -- Cargar la imagen de logo con pillow
         original_img = Image.open("logo.png")
-        # Reducir el tamaño de la imagen
         original_img = original_img.resize((40, 40))
         logo_img = ImageTk.PhotoImage(original_img)
-
         logo_label = tk.Label(self.logo_frame, image=logo_img)
-        # Evitar que la imagen sea eliminada por el recolector de basura
         logo_label.image = logo_img
         logo_label.pack()
 
-        # Crear un estilo para los Entry widgets
+        # -- Estilo de Entry widgets
         estilo = ttk.Style()
-        # Establecer el relleno (padding) para los Entry widgets
         estilo.configure("TEntry", padding=(5, 5, 5, 5))
-
-        # Establecer el fondo del cuaderno de pestanas
+        # -- Fondo del cuaderno de pestanas
         estilo.configure("TNotebook", background="black", fg="white")
         estilo.configure("TNotebook.Tab", background="black",
-                         foreground="black")  # Establecer el fondo de los tabs
+                         foreground="black")
 
-        # Cuaderno de pestañas
+        # -- Cuaderno de solapas
         self.pestanas = ttk.Notebook(self)
         self.pestanas.place(x=420, y=100, width=500)
-
         self.crear_tab()
         self.ver_tab()
         self.modificar_tab()
         self.borrar_tab()
+        
+    #
+    ##
+    ### Funciones para dividir solapas
+    ##
+    #
 
     def crear_tab(self):
         crear_tab = ttk.Frame(self.pestanas)
@@ -76,9 +72,13 @@ class VentanaPestanas(tk.Tk):
         self.pestanas.add(borrar_tab, text=" Borrar Reserva ")
         self.borrar_frame_content(borrar_tab)
 
-    # --- Frames de Solapas ---
+    #
+    ##
+    ### Funciones del contenido de solapas (contenido de cada frame)
+    ##
+    #
 
-    # frame crear
+        # -- frame crear
     def crear_frame_content(self, parent):
         frame = tk.Frame(parent)
         frame.pack(padx=10, pady=10)
@@ -127,12 +127,11 @@ class VentanaPestanas(tk.Tk):
             "Arial", 14, "bold"), command=self.crear_reserva)
         action_button.pack(padx=10, pady=10)
 
-    # frame ver
-
+        # -- frame ver
     def ver_frame_content(self, parent):
         frame = tk.Frame(parent)
         frame.pack(padx=10, pady=10)
-        # Widgets específicos para Ver Reserva
+        # -- Widgets --
         ver_label = tk.Label(frame, text="\nVer reserva",
                              font=("Arial", 14, "bold"))
         ver_label.pack()
@@ -148,10 +147,11 @@ class VentanaPestanas(tk.Tk):
                                fg="white", font=("Arial", 14, "bold"))
         ver_button.pack(padx=10, pady=10)
 
-    # frame modificar
+        # -- frame modificar
     def modificar_frame_content(self, parent):
         frame = tk.Frame(parent)
         frame.pack(padx=10, pady=10)
+        # -- Widgets --
         modificar_label = tk.Label(
             frame, text="\nModificar reserva", font=("Arial", 14, "bold"))
         modificar_label.pack()
@@ -191,21 +191,18 @@ class VentanaPestanas(tk.Tk):
         self.mesa_modificar_entry = ttk.Entry(
             frame, style="TEntry", font=("Arial", 12))
         self.mesa_modificar_entry.pack(padx=10, pady=5)
-
-        # Botón de acción
         action_button = tk.Button(
             frame, text="Modificar", bg="orange", fg="white", font=("Arial", 14, "bold"))
         action_button.pack(padx=10, pady=10)
 
-    # frame borrar
+        # -- frame borrar
     def borrar_frame_content(self, parent):
         frame = tk.Frame(parent)
         frame.pack(padx=10, pady=10)
+        # -- Widgets --
         borrar_label = tk.Label(
             frame, text="\nBorrar reserva", font=("Arial", 14, "bold"))
         borrar_label.pack()
-
-        # Widgets específicos para Borrar Reserva
         nombre_borrar_label = tk.Label(frame, text="\nNombre:")
         nombre_borrar_label.pack()
         self.nombre_borrar_entry = ttk.Entry(frame, font=("Arial", 12))
@@ -218,9 +215,11 @@ class VentanaPestanas(tk.Tk):
                                   fg="white", font=("Arial", 14, "bold"))
         borrar_button.pack(padx=10, pady=10)
 
-    # Funciones para interactuar con la base de datos
-
-        ######################################################################
+    # 
+    ##
+    ### Funciones para interactuar con la base de datos
+    ##
+    # 
 
     def crear_reserva(self):
         # Obtener datos del formulario
@@ -234,30 +233,23 @@ class VentanaPestanas(tk.Tk):
 
         # Establecer la conexión a la base de datos (reemplaza los valores con los de tu base de datos)
         conn = mysql.connector.connect(
-            host="localhost", user="root", password="44602955", database="bar")
+            host="localhost", user="root", password="...", database="bar")
         cursor = conn.cursor()
 
         # Crear la consulta SQL para insertar un nuevo registro en la tabla cliente
         consulta_crear_cliente = "INSERT INTO cliente (nombre, apellido, dni, telefono) VALUES (%s, %s, %s, %s)"
         datos_cliente = (nombre, apellido, dni, telefono)
-
-        # Ejecutar la consulta SQL para la tabla cliente
         cursor.execute(consulta_crear_cliente, datos_cliente)
 
-        # Obtener el ID del cliente recién insertado
-        id_cliente = cursor.lastrowid
-
         # Crear la consulta SQL para insertar un nuevo registro en la tabla reserva
+        id_cliente = cursor.lastrowid
         consulta_crear_reserva = "INSERT INTO reserva (id_mesa, id_cliente, fecha, hora) VALUES (%s, %s, %s, %s)"
         datos_crear_reserva = (mesa, id_cliente, fecha, hora)
-
-        # Ejecutar la consulta SQL para la tabla reserva
         cursor.execute(consulta_crear_reserva, datos_crear_reserva)
 
-        # Commit para aplicar los cambios en la base de datos
+        # Aplicar los cambios en la base de datos
         conn.commit()
-
-        # Cerrar la conexión
+        # Cerrar la conexion
         conn.close()
 
         # Realizar la operación de creación en la base de datos usando los datos obtenidos
@@ -267,13 +259,15 @@ class VentanaPestanas(tk.Tk):
         nombre = self.nombre_ver_entry.get()
         telefono = self.telefono_ver_entry.get()
 
+        #consulta_ver_reserva = "SELECT * FROM reserva WHERE "
+
         # Realizar la operación de consulta en la base de datos usando los datos obtenidos
 
-    # def modificar_reserva(self):
+    """ def modificar_reserva(self):"""
         # Obtener datos del formulario
         # Realizar la operación de modificación en la base de datos usando los datos obtenidos
 
-    # def borrar_reserva(self):
+    """ def borrar_reserva(self): """
         # Obtener datos del formulario
         # Realizar la operación de borrado en la base de datos usando los datos obtenidos
 
