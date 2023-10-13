@@ -144,8 +144,16 @@ class VentanaPestanas(tk.Tk):
         self.telefono_ver_entry = ttk.Entry(frame, font=("Arial", 12))
         self.telefono_ver_entry.pack(padx=10, pady=5)
         ver_button = tk.Button(frame, text="Ver", bg="blue",
-                               fg="white", font=("Arial", 14, "bold"))
+                               fg="white", font=("Arial", 14, "bold"), command=self.mostrar_reserva)
         ver_button.pack(padx=10, pady=10)
+
+        # Widget Text para mostrar los resultados
+        self.resultados_text = tk.Text(frame, wrap=tk.WORD, width=50, height=10, font=("Arial", 12), background="#E1E1E1", fg="black")
+        self.resultados_text.pack(padx=10, pady=10)        
+        # Botón para volver a cargar
+        recargar_button = tk.Button(frame, text="Volver a Cargar", bg="orange", fg="white", font=("Arial", 14, "bold"), command=self.resetear_consulta)
+        recargar_button.pack(padx=10, pady=10)
+
 
         # -- frame modificar
     def modificar_frame_content(self, parent):
@@ -230,38 +238,41 @@ class VentanaPestanas(tk.Tk):
         telefono = self.telefono_crear_entry.get()
         fecha = self.fecha_crear_entry.get()
         hora = self.hora_crear_entry.get()
-
-        # Establecer la conexión a la base de datos (reemplaza los valores con los de tu base de datos)
-        conn = mysql.connector.connect(
-            host="localhost", user="root", password="...", database="bar")
+        #cambiar los datos si es necesario
+        conn = mysql.connector.connect(host="localhost", user="root", password="???", database="bar")
         cursor = conn.cursor()
-
-        # Crear la consulta SQL para insertar un nuevo registro en la tabla cliente
         consulta_crear_cliente = "INSERT INTO cliente (nombre, apellido, dni, telefono) VALUES (%s, %s, %s, %s)"
         datos_cliente = (nombre, apellido, dni, telefono)
         cursor.execute(consulta_crear_cliente, datos_cliente)
-
-        # Crear la consulta SQL para insertar un nuevo registro en la tabla reserva
         id_cliente = cursor.lastrowid
         consulta_crear_reserva = "INSERT INTO reserva (id_mesa, id_cliente, fecha, hora) VALUES (%s, %s, %s, %s)"
         datos_crear_reserva = (mesa, id_cliente, fecha, hora)
         cursor.execute(consulta_crear_reserva, datos_crear_reserva)
-
-        # Aplicar los cambios en la base de datos
         conn.commit()
-        # Cerrar la conexion
         conn.close()
 
-        # Realizar la operación de creación en la base de datos usando los datos obtenidos
 
-    def ver_reserva(self):
+    def mostrar_reserva(self):
         # Obtener datos del formulario
         nombre = self.nombre_ver_entry.get()
         telefono = self.telefono_ver_entry.get()
+        #cambiar los datos si es necesario
+        conn = mysql.connector.connect(host="localhost", user="root", password="???", database="bar")
+        cursor = conn.cursor()
+        consulta_ver_reserva = "SELECT * FROM reserva R INNER JOIN cliente C ON R.id_cliente = C.id_cliente WHERE C.nombre = %s AND C.telefono = %s"
+        datos_ver_reserva = (nombre, telefono)
+        cursor.execute(consulta_ver_reserva, datos_ver_reserva)
+        reservas = cursor.fetchall()
+        self.resultados_text.delete(1.0, tk.END)
+        if reservas:
+            for reserva in reservas:
+                resultado = "Id Reserva: {}\nId Mesa: {}\nId Cliente: {}\nFecha: {}\nHora: {}\n\n".format(reserva[0], reserva[1], reserva[2], reserva[3], reserva[4])
+                self.resultados_text.insert(tk.END, resultado)
+        else:
+            self.resultados_text.insert(tk.END, "No se encontraron reservas para el cliente con nombre {} y telefono {}".format(nombre, telefono))
+        
+        conn.close()
 
-        #consulta_ver_reserva = "SELECT * FROM reserva WHERE "
-
-        # Realizar la operación de consulta en la base de datos usando los datos obtenidos
 
     """ def modificar_reserva(self):"""
         # Obtener datos del formulario
@@ -271,6 +282,12 @@ class VentanaPestanas(tk.Tk):
         # Obtener datos del formulario
         # Realizar la operación de borrado en la base de datos usando los datos obtenidos
 
+    # Boton para resetear consultas
+    def resetear_consulta(self):
+        # Limpiar los campos de entrada y el widget Text
+        self.nombre_ver_entry.delete(0, tk.END)
+        self.telefono_ver_entry.delete(0, tk.END)
+        self.resultados_text.delete(1.0, tk.END)
 
 app = VentanaPestanas()
 app.mainloop()
