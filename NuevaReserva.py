@@ -127,6 +127,12 @@ class VentanaPestanas(tk.Tk):
             "Arial", 14, "bold"), command=self.crear_reserva)
         action_button.pack(padx=10, pady=10)
 
+        self.resultado_crear_label = tk.Label(frame, text="", font=("Arial", 12, "bold"), fg="green")
+        self.resultado_crear_label.pack(padx=10, pady=10)
+        
+        
+        
+        
         # -- frame ver
     def ver_frame_content(self, parent):
         frame = tk.Frame(parent)
@@ -238,18 +244,42 @@ class VentanaPestanas(tk.Tk):
         telefono = self.telefono_crear_entry.get()
         fecha = self.fecha_crear_entry.get()
         hora = self.hora_crear_entry.get()
-        #cambiar los datos si es necesario
-        conn = mysql.connector.connect(host="localhost", user="root", password="???", database="bar")
-        cursor = conn.cursor()
-        consulta_crear_cliente = "INSERT INTO cliente (nombre, apellido, dni, telefono) VALUES (%s, %s, %s, %s)"
-        datos_cliente = (nombre, apellido, dni, telefono)
-        cursor.execute(consulta_crear_cliente, datos_cliente)
-        id_cliente = cursor.lastrowid
-        consulta_crear_reserva = "INSERT INTO reserva (id_mesa, id_cliente, fecha, hora) VALUES (%s, %s, %s, %s)"
-        datos_crear_reserva = (mesa, id_cliente, fecha, hora)
-        cursor.execute(consulta_crear_reserva, datos_crear_reserva)
-        conn.commit()
-        conn.close()
+
+        # Verificar si todos los campos obligatorios están llenos
+        if not mesa or not nombre or not apellido or not dni or not telefono or not fecha or not hora:
+            mensaje = "Debe completar todos los campos."
+            self.resultado_crear_label.config(text=mensaje, fg="red")
+            return
+
+        try:
+            # Establecer la conexión a la base de datos
+            conn = mysql.connector.connect(host="localhost", user="root", password="???", database="bar")
+            cursor = conn.cursor()
+
+            # Consulta para crear el cliente
+            consulta_crear_cliente = "INSERT INTO cliente (nombre, apellido, dni, telefono) VALUES (%s, %s, %s, %s)"
+            datos_cliente = (nombre, apellido, dni, telefono)
+            cursor.execute(consulta_crear_cliente, datos_cliente)
+            id_cliente = cursor.lastrowid
+
+            # Consulta para crear la reserva
+            consulta_crear_reserva = "INSERT INTO reserva (id_mesa, id_cliente, fecha, hora) VALUES (%s, %s, %s, %s)"
+            datos_crear_reserva = (mesa, id_cliente, fecha, hora)
+            cursor.execute(consulta_crear_reserva, datos_crear_reserva)
+
+            # Commit y cierre de la conexión
+            conn.commit()
+            conn.close()
+
+            # Mostrar mensaje de éxito
+            mensaje = "La reserva fue creada con éxito."
+            self.resultado_crear_label.config(text=mensaje, fg="green")
+
+        except mysql.connector.Error as err:
+            # Mostrar mensaje de error de conexión a la base de datos
+            mensaje = "No se pudo crear la reserva."
+            self.resultado_crear_label.config(text=mensaje, fg="red")
+
 
 
     def mostrar_reserva(self):
@@ -269,7 +299,7 @@ class VentanaPestanas(tk.Tk):
                 resultado = "Id Reserva: {}\nId Mesa: {}\nId Cliente: {}\nFecha: {}\nHora: {}\n\n".format(reserva[0], reserva[1], reserva[2], reserva[3], reserva[4])
                 self.resultados_text.insert(tk.END, resultado)
         else:
-            self.resultados_text.insert(tk.END, "No se encontraron reservas para el cliente con nombre {} y telefono {}".format(nombre, telefono))
+            self.resultados_text.insert(tk.END, "No se encontraron reservas para el cliente con nombre ' {} ' y telefono ' {} '".format(nombre, telefono))
         
         conn.close()
 
