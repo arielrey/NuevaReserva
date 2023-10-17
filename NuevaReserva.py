@@ -1,5 +1,5 @@
 ###
-### Lineas a modificar para la conexion a la base de datos: 275, 307, 340 y 375
+### Lineas a modificar para la conexion a la base de datos: 282, 313, 349 y 384
 ###
 import tkinter as tk
 from tkinter import ttk
@@ -158,10 +158,17 @@ class VentanaPestanas(tk.Tk):
         ver_button = tk.Button(frame, text="Ver", bg="blue", fg="white", font=("Arial", 14, "bold"), command=self.mostrar_reserva)
         ver_button.pack(padx=10, pady=10)
         
-        self.resultados_text = tk.Text(frame, wrap=tk.WORD, width=50, height=10, font=("Arial", 12), background="#E1E1E1", fg="black")
-        self.resultados_text.pack(padx=10, pady=10)        
-        
-        recargar_button = tk.Button(frame,text="❌", bg="#CE2828", font=("Arial", 14), command=self.resetear_consulta, fg="white")
+        # Crear un Treeview para mostrar los resultados
+        self.resultados_treeview = ttk.Treeview(frame, columns=("id_reserva", "id_mesa", "id_cliente", "fecha", "hora"))
+        self.resultados_treeview.heading("#1", text="ID Reserva")
+        self.resultados_treeview.heading("#2", text="ID Mesa")
+        self.resultados_treeview.heading("#3", text="ID Cliente")
+        self.resultados_treeview.heading("#4", text="Fecha")
+        self.resultados_treeview.heading("#5", text="Hora")
+        self.resultados_treeview["show"] = "headings"
+        self.resultados_treeview.pack(padx=10, pady=10)
+
+        recargar_button = tk.Button(frame, text="❌", bg="#CE2828", font=("Arial", 14), command=self.resetear_consulta, fg="white")
         recargar_button.pack(padx=0, pady=0)
 
         # -- frame modificar
@@ -301,8 +308,7 @@ class VentanaPestanas(tk.Tk):
 
     def mostrar_reserva(self):
         nombre = self.nombre_ver_entry.get()
-        telefono = self.telefono_ver_entry.get()
-        
+        telefono = self.telefono_ver_entry.get()            
         # Modificar los datos si es necesario
         conn = mysql.connector.connect(host="localhost", user="root", password="???", database="bar")
         cursor = conn.cursor()
@@ -310,13 +316,16 @@ class VentanaPestanas(tk.Tk):
         datos_ver_reserva = (nombre, telefono)
         cursor.execute(consulta_ver_reserva, datos_ver_reserva)
         reservas = cursor.fetchall()
-        self.resultados_text.delete(1.0, tk.END)
+            
+            # Limpiar la tabla antes de mostrar nuevos resultados
+        for row in self.resultados_treeview.get_children():
+            self.resultados_treeview.delete(row)
         if reservas:
             for reserva in reservas:
-                resultado = "Id Reserva: {}\nId Mesa: {}\nId Cliente: {}\nFecha: {}\nHora: {}\n\n".format(reserva[0], reserva[1], reserva[2], reserva[3], reserva[4])
-                self.resultados_text.insert(tk.END, resultado)
+                self.resultados_treeview.insert("", "end", values=reserva)
         else:
-            self.resultados_text.insert(tk.END, "No se encontraron reservas para el cliente con nombre ' {} ' y telefono ' {} '".format(nombre, telefono))        
+            self.resultados_treeview.insert("", "end", values=("No se encontraron reservas", "", "", "", ""))
+            
         conn.close()
 
 
