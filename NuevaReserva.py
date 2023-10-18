@@ -1,5 +1,5 @@
 ###
-### Lineas a modificar para la conexion a la base de datos: 282, 313, 349 y 384
+### Lineas a modificar para la conexion a la base de datos: 285, 316, 355 y 390
 ###
 import tkinter as tk
 from tkinter import ttk
@@ -10,7 +10,7 @@ class VentanaPestanas(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Nueva Reserva")
-        self.geometry("1343x900")
+        self.geometry("1330x780")
         self.iconbitmap("logo.ico")
 
         # -- Crear un Canvas para el fondo general
@@ -88,55 +88,58 @@ class VentanaPestanas(tk.Tk):
     ##
     #
 
-        # -- frame crear
+    # -- frame crear
     def crear_frame_content(self, parent):
         frame = tk.Frame(parent)
         frame.pack(padx=10, pady=10)
-        
+
+        # Widgets
         nombre_label = tk.Label(frame, text="\nCrear reserva\n", font=("Arial", 14, "bold"))
-        nombre_label.pack()
+        nombre_label.grid(row=0, column=0, columnspan=2, pady=10)
 
+        tipo_mesa_label = tk.Label(frame, text="Tipo de mesa:")
+        tipo_mesa_label.grid(row=1, column=0, sticky="w", pady=10)
         self.combo = ttk.Combobox(frame, state="readonly", values=["Familiar", "Una persona", "Dos personas"], style="TEntry")
-        self.combo.set("Tipo de mesa             🔽")  # Establece el texto por defecto
-        self.combo.bind("<<ComboboxSelected>>", self.on_combobox_select)  # Configura el evento de selección
-        self.combo.pack(padx=10, pady=10)
+        self.combo.set("Tipo de mesa             🔽")
+        self.combo.bind("<<ComboboxSelected>>", self.on_combobox_select)
+        self.combo.grid(row=1, column=1, sticky="w", pady=10)
 
-        nombre_label = tk.Label(frame, text="\nNombre:")
-        nombre_label.pack()
+        nombre_crear_label = tk.Label(frame, text="Nombre:")
+        nombre_crear_label.grid(row=2, column=0, sticky="w", pady=10)
         self.nombre_crear_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12))
-        self.nombre_crear_entry.pack(padx=10, pady=5)
-        
-        apellido_label = tk.Label(frame, text="\nApellido:")
-        apellido_label.pack()
+        self.nombre_crear_entry.grid(row=2, column=1, sticky="w", pady=10)
+
+        apellido_crear_label = tk.Label(frame, text="Apellido:")
+        apellido_crear_label.grid(row=3, column=0, sticky="w", pady=10)
         self.apellido_crear_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12))
-        self.apellido_crear_entry.pack(padx=10, pady=5)
-        
-        dni_crear_label = tk.Label(frame, text="\nDNI:")
-        dni_crear_label.pack()
+        self.apellido_crear_entry.grid(row=3, column=1, sticky="w", pady=10)
+
+        dni_crear_label = tk.Label(frame, text="DNI:")
+        dni_crear_label.grid(row=4, column=0, sticky="w", pady=10)
         self.dni_crear_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12))
-        self.dni_crear_entry.pack(padx=10, pady=5)
-        
-        telefono_label = tk.Label(frame, text="\nTeléfono:")
-        telefono_label.pack()
+        self.dni_crear_entry.grid(row=4, column=1, sticky="w", pady=10)
+
+        telefono_crear_label = tk.Label(frame, text="Teléfono:")
+        telefono_crear_label.grid(row=5, column=0, sticky="w", pady=10)
         self.telefono_crear_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12), background="#59F5D6")
-        self.telefono_crear_entry.pack(padx=10, pady=5)
-        
-        fecha_crear_label = tk.Label(frame, text="\nFecha:")
-        fecha_crear_label.pack()
+        self.telefono_crear_entry.grid(row=5, column=1, sticky="w", pady=10)
+
+        fecha_crear_label = tk.Label(frame, text="Fecha:")
+        fecha_crear_label.grid(row=6, column=0, sticky="w", pady=10)
         self.fecha_crear_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12))
-        self.fecha_crear_entry.pack(padx=10, pady=5)
-        
-        hora_crear_label = tk.Label(frame, text="\nHora:")
-        hora_crear_label.pack()
+        self.fecha_crear_entry.grid(row=6, column=1, sticky="w", pady=10)
+
+        hora_crear_label = tk.Label(frame, text="Hora:")
+        hora_crear_label.grid(row=7, column=0, sticky="w", pady=10)
         self.hora_crear_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12))
-        self.hora_crear_entry.pack(padx=10, pady=5)
-        
+        self.hora_crear_entry.grid(row=7, column=1, sticky="w", pady=10)
+
         action_button = tk.Button(frame, text="Crear", bg="green", fg="white", font=("Arial", 14, "bold"), command=self.crear_reserva)
-        action_button.pack(padx=10, pady=10)
+        action_button.grid(row=8, column=0, columnspan=2, pady=15)
 
         self.resultado_crear_label = tk.Label(frame, text="", font=("Arial", 12, "bold"), fg="green")
-        self.resultado_crear_label.pack(padx=10, pady=10)
-        
+        self.resultado_crear_label.grid(row=9, column=0, columnspan=2, pady=10)
+
         # -- frame ver
     def ver_frame_content(self, parent):
         frame = tk.Frame(parent)
@@ -167,6 +170,10 @@ class VentanaPestanas(tk.Tk):
         self.resultados_treeview.heading("#5", text="Hora")
         self.resultados_treeview["show"] = "headings"
         self.resultados_treeview.pack(padx=10, pady=10)
+        
+        self.resultado_ver_label = tk.Label(frame, text="", font=("Arial", 12, "bold"), fg="red")
+        self.resultado_ver_label.pack(padx=10, pady=5)
+        
 
         recargar_button = tk.Button(frame, text="❌", bg="#CE2828", font=("Arial", 14), command=self.resetear_consulta, fg="white")
         recargar_button.pack(padx=0, pady=0)
@@ -176,56 +183,52 @@ class VentanaPestanas(tk.Tk):
         frame = tk.Frame(parent)
         frame.pack(padx=10, pady=10)
         frame.config(width=400)
-            #Widgets
+        
+        # Widgets
         modificar_label = tk.Label(frame, text="\nModificar reserva", font=("Arial", 14, "bold"))
-        modificar_label.pack()
+        modificar_label.grid(row=0, column=0, columnspan=2, sticky="w", pady=10)
         
         id_reserva_modificar_label = tk.Label(frame, text="\nId de reserva:")
-        id_reserva_modificar_label.pack()
+        id_reserva_modificar_label.grid(row=1, column=0, sticky="w", pady=10)
         self.id_reserva_modificar_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12))
-        self.id_reserva_modificar_entry.pack(padx=10, pady=5)
+        self.id_reserva_modificar_entry.grid(row=1, column=1, sticky="w", pady=10)
         
         nombre_modificar_label = tk.Label(frame, text="\nNombre:")
-        nombre_modificar_label.pack()
+        nombre_modificar_label.grid(row=2, column=0, sticky="w", pady=10)
         self.nombre_modificar_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12))
-        self.nombre_modificar_entry.pack(padx=10, pady=5)
+        self.nombre_modificar_entry.grid(row=2, column=1, sticky="w", pady=10)
         
         apellido_modificar_label = tk.Label(frame, text="\nApellido:")
-        apellido_modificar_label.pack()
+        apellido_modificar_label.grid(row=3, column=0, sticky="w", pady=10)
         self.apellido_modificar_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12))
-        self.apellido_modificar_entry.pack(padx=10, pady=5)
+        self.apellido_modificar_entry.grid(row=3, column=1, sticky="w", pady=10)
         
         telefono_modificar_label = tk.Label(frame, text="\nTeléfono:")
-        telefono_modificar_label.pack()
+        telefono_modificar_label.grid(row=4, column=0, sticky="w", pady=10)
         self.telefono_modificar_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12), background="#59F5D6")
-        self.telefono_modificar_entry.pack(padx=10, pady=5)
+        self.telefono_modificar_entry.grid(row=4, column=1, sticky="w", pady=10)
         
         fecha_modificar_label = tk.Label(frame, text="\nFecha:")
-        fecha_modificar_label.pack()
+        fecha_modificar_label.grid(row=5, column=0, sticky="w", pady=10)
         self.fecha_modificar_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12))
-        self.fecha_modificar_entry.pack(padx=10, pady=5)
+        self.fecha_modificar_entry.grid(row=5, column=1, sticky="w", pady=10)
         
         hora_modificar_label = tk.Label(frame, text="\nHora:")
-        hora_modificar_label.pack()
+        hora_modificar_label.grid(row=6, column=0, sticky="w", pady=10)
         self.hora_modificar_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12))
-        self.hora_modificar_entry.pack(padx=10, pady=5)
+        self.hora_modificar_entry.grid(row=6, column=1, sticky="w", pady=10)
         
         mesa_modificar_label = tk.Label(frame, text="\nMesa:")
-        mesa_modificar_label.pack()
+        mesa_modificar_label.grid(row=7, column=0, sticky="w", pady=10)
         self.mesa_modificar_entry = ttk.Entry(frame, style="TEntry", font=("Arial", 12))
-        self.mesa_modificar_entry.pack(padx=10, pady=5)
+        self.mesa_modificar_entry.grid(row=7, column=1, sticky="w", pady=10)
         
         action_button = tk.Button(frame, text="Modificar", bg="orange", fg="white", font=("Arial", 14, "bold"), command=self.modificar_reserva)
-        action_button.place(y=606, x=10)
-        action_button.pack(padx=5, pady=10)
-
-        recargar_button = tk.Button(frame,text="❌", bg="#CE2828", font=("Arial", 14), command=self.resetear_consulta, fg="white")
-        recargar_button.pack(padx=2, pady=5)
-        recargar_button.place(y=606, x=200)
+        action_button.grid(row=8, column=0, columnspan=2, pady=10)
 
         self.resultado_modificar_label = tk.Label(frame, text="", font=("Arial", 12, "bold"), fg="green")
-        self.resultado_modificar_label.pack(padx=10, pady=10)
-      
+        self.resultado_modificar_label.grid(row=10, column=0, columnspan=2, pady=10)
+
     # frame borrar
     def borrar_frame_content(self, parent):
         frame = tk.Frame(parent)
@@ -279,7 +282,7 @@ class VentanaPestanas(tk.Tk):
             return
         try:
             # Modificar los datos si es necesario
-            conn = mysql.connector.connect(host="localhost", user="root", password="???", database="bar")
+            conn = mysql.connector.connect(host="localhost", user="root", password="", database="bar")
             cursor = conn.cursor()
             # Consulta para crear el cliente
             consulta_crear_cliente = "INSERT INTO cliente (nombre, apellido, dni, telefono) VALUES (%s, %s, %s, %s)"
@@ -310,22 +313,25 @@ class VentanaPestanas(tk.Tk):
         nombre = self.nombre_ver_entry.get()
         telefono = self.telefono_ver_entry.get()            
         # Modificar los datos si es necesario
-        conn = mysql.connector.connect(host="localhost", user="root", password="???", database="bar")
+        conn = mysql.connector.connect(host="localhost", user="root", password="", database="bar")
         cursor = conn.cursor()
         consulta_ver_reserva = "SELECT * FROM reserva R INNER JOIN cliente C ON R.id_cliente = C.id_cliente WHERE C.nombre = %s AND C.telefono = %s"
         datos_ver_reserva = (nombre, telefono)
         cursor.execute(consulta_ver_reserva, datos_ver_reserva)
         reservas = cursor.fetchall()
             
-            # Limpiar la tabla antes de mostrar nuevos resultados
+        # Limpiar la tabla antes de mostrar nuevos resultados
         for row in self.resultados_treeview.get_children():
             self.resultados_treeview.delete(row)
+        
         if reservas:
             for reserva in reservas:
                 self.resultados_treeview.insert("", "end", values=reserva)
+            self.resultado_ver_label.config(text="")
         else:
-            self.resultados_treeview.insert("", "end", values=("No se encontraron reservas", "", "", "", ""))
-            
+            self.resultados_treeview.insert("", "end", values=("?", "?", "?", "?", "?"))
+            self.resultado_ver_label.config(text="No se encontraron reservas", fg="red")
+
         conn.close()
 
 
@@ -346,7 +352,7 @@ class VentanaPestanas(tk.Tk):
             return
         try:
             # Modificar los datos si es necesario
-            conn = mysql.connector.connect(host="localhost", user="root", password="???", database="bar")
+            conn = mysql.connector.connect(host="localhost", user="root", password="", database="bar")
             cursor = conn.cursor()
             # Consulta para modificar la reserva
             consulta_modificar_reserva = "UPDATE reserva SET id_mesa=%s, fecha=%s, hora=%s WHERE id_reserva=%s"
@@ -381,7 +387,7 @@ class VentanaPestanas(tk.Tk):
             return
         try:
             # Cambiar datos si es necesario
-            conn = mysql.connector.connect(host="localhost", user="root", password="???", database="bar")
+            conn = mysql.connector.connect(host="localhost", user="root", password="", database="bar")
             cursor = conn.cursor()
             # Borrar reserva
             consulta_borrar_reserva = "DELETE FROM reserva WHERE id_cliente IN (SELECT id_cliente FROM cliente WHERE nombre = %s AND telefono = %s)"
